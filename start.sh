@@ -9,8 +9,13 @@ npx expo install react-native-screens react-native-safe-area-context
 #Others commands
 npx expo customize metro.config.js
 
+# npm install @react-native-async-storage/async-storage 
+
 #Open Emulator
 open -a Simulator
 
 #Run application
 npx expo start
+
+#Shorcuts Application
+rnfe
