@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, Text, GestureResponderEvent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { loginButtonStyles } from '../styles/loginStyles';
 
 interface LoginButtonProps {
     onPress: (event: GestureResponderEvent) => void;
@@ -8,38 +9,17 @@ interface LoginButtonProps {
 
 const LoginButton: React.FC<LoginButtonProps> = ({ onPress }) => {
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
+        <TouchableOpacity style={loginButtonStyles.button} onPress={onPress}>
             <LinearGradient
                 colors={['#2B333E', '#2B333E', '#355469']}
-                style={styles.linearGradient}
+                style={loginButtonStyles.linearGradient}
                 start={{ x: 1, y: 0 }}
                 end={{ x: 0, y: 1 }}
             >
-                <Text style={styles.text}>Login</Text>
+                <Text style={loginButtonStyles.text}>Login</Text>
             </LinearGradient>
         </TouchableOpacity>
     );
 };
-
-const styles = StyleSheet.create({
-    button: {
-        alignItems: 'center',
-        height: 50,
-        marginTop: 25
-    },
-    linearGradient: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 16,
-        width: '100%',
-        height: '100%',
-    },
-    text: {
-        backgroundColor: 'transparent',
-        fontSize: 20,
-        color: '#FFFFFF',
-        fontWeight: 'bold',
-    },
-});
 
 export default LoginButton;
