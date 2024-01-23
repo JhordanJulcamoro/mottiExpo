@@ -9,6 +9,12 @@ npx expo install react-native-screens react-native-safe-area-context
 #SVG
 npx expo install react-native-svg
 
+#LinearGradient
+npx expo install expo-linear-gradient
+
+#Icons
+npx expo install @types/react-native-vector-icons
+
 #Others commands
 npx expo customize metro.config.js
 
