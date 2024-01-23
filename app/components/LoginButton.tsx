@@ -1,8 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const LoginButton = ({ onPress }) => {
+interface LoginButtonProps {
+    onPress: (event: GestureResponderEvent) => void;
+}
+
+const LoginButton: React.FC<LoginButtonProps> = ({ onPress }) => {
     return (
         <TouchableOpacity style={styles.button} onPress={onPress}>
             <LinearGradient
