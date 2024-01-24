@@ -1,5 +1,5 @@
 import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LoginButton from '../components/LoginButton';
@@ -7,12 +7,59 @@ import SvgTop from '../components/svg/SvgTop';
 import { signIn, signUp } from '../authFunctions';
 import { loginStyles } from '../styles/loginStyles';
 import { commonStyles } from '../styles/commonStyles';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import { GoogleAuthProvider,onAuthStateChanged,signInWithCredential } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { User } from 'firebase/auth';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
+    const [userInfo,setUserInfo] = useState<User | null>(null);
+    const [request,response,promptAsync] = Google.useAuthRequest({
+        iosClientId:'11429232960-siut1q47f49khpkevdol1ljt6sa1aoij.apps.googleusercontent.com',
+        androidClientId:'11429232960-g87dr8tadnhjhuh7srdltlh7u9df4f16.apps.googleusercontent.com',
+    });
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const auth = FIREBASE_AUTH;
+
+    // const checkLocalUser = async () => {
+    //     try {
+    //         const userJSON = await AsyncStorage.getItem("@user");
+    //         const userData = userJSON ? JSON.parse(userJSON):null;
+    //         console.log("Local storage: ", userData);
+    //         setUserInfo(userData);
+    //     } catch (error:any) {
+    //         alert(error.message);
+    //     }
+    // }
+
+    useEffect(() => {
+        if(response?.type == "success") {
+            const {id_token} = response.params;
+            const credential = GoogleAuthProvider.credential(id_token);
+            signInWithCredential(auth, credential);
+        }
+    }, [response]);
+
+    // useEffect(() => { 
+    //     checkLocalUser();
+    //     const unsub = onAuthStateChanged(auth,async (user) => {
+    //         if (user){
+    //             console.log("User in::" + JSON.stringify(user,null,2));
+    //             setUserInfo(user);
+    //             await AsyncStorage.setItem("@user", JSON.stringify(user));
+    //         }else {
+    //             console.log("Not logged registered")
+    //         }
+    //     });
+
+    //     return () => 
+    //     unsub();
+    // }, []);
 
     const handleSignIn = async () => {
         setLoading(true);
@@ -56,7 +103,7 @@ const Login = () => {
                                 <TouchableOpacity style={commonStyles.socialButton}>
                                     <Icon name="apple" size={35} color="#2B333E" />
                                 </TouchableOpacity>
-                                <TouchableOpacity style={commonStyles.socialButton}>
+                                <TouchableOpacity style={commonStyles.socialButton} onPress={() => promptAsync()}>
                                     <Icon name="google" size={35} color="#2B333E" />
                                 </TouchableOpacity>
                             </View>

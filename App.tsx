@@ -6,6 +6,7 @@ import Detail from './app/screens/Detail';
 import { useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './FirebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,12 +25,38 @@ function InsideLayout() {
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      // console.log('user', user);
-      setUser(user);
+  const checkLocalUser = async () => {
+    try {
+        const userJSON = await AsyncStorage.getItem("@user");
+        const userData = userJSON ? JSON.parse(userJSON):null;
+        console.log("Local storage: ", userData);
+        setUser(userData);
+    } catch (error:any) {
+        alert(error.message);
+    }
+}
+
+  // useEffect(() => {
+  //   onAuthStateChanged(FIREBASE_AUTH, (user) => {
+  //     setUser(user);
+  //   });
+  // }, []);
+
+  useEffect(() => { 
+    checkLocalUser();
+    const unsub = onAuthStateChanged(FIREBASE_AUTH,async (user) => {
+        if (user){
+            console.log("User in::" + JSON.stringify(user,null,2));
+            setUser(user);
+            await AsyncStorage.setItem("@user", JSON.stringify(user));
+        }else {
+            console.log("Not logged registered")
+        }
     });
-  }, []);
+
+    return () => 
+    unsub();
+}, []);
 
   return (
     <NavigationContainer>
